@@ -22,8 +22,6 @@ __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
 __date__ = "2/07/2016"
 
-import glob
-import os
 from setuptools import setup
 
 version = "5.1.2"
@@ -53,9 +51,6 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                ]
 install_requires = ["PyMca5>=5.1.2"]
 
-platform = "posix" if os.name == "posix" else "win"
-scripts = glob.glob(os.path.join("scripts", platform, "*"))
-
 if __name__ == "__main__":
     setup(name=name,
           version=version,
@@ -64,5 +59,4 @@ if __name__ == "__main__":
           description=description,
           long_description=long_description,
           install_requires=install_requires,
-          scripts=scripts
           )
