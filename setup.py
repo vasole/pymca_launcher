@@ -24,27 +24,31 @@ __date__ = "2/07/2016"
 
 from setuptools import setup
 
-version="5.1.2"
+version = "5.1.2"
 name = "pymca"
 author = "ESRF - Data Analysis Unit"
 description = "pymca"
 f = open("README.rst")
-long_description=f.read()
+long_description = f.read()
 f.close()
 classifiers = ["Development Status :: 5 - Production/Stable",
                "Environment :: Console",
+               "Environment :: MacOS X",
                "Environment :: Win32 (MS Windows)",
+               "Environment :: X11 Applications :: Qt",
                "Intended Audience :: Education",
                "Intended Audience :: Science/Research",
                "License :: OSI Approved :: MIT License",
                "Natural Language :: English",
+               "Operating System :: MacOS",
                "Operating System :: Microsoft :: Windows",
+               "Operating System :: POSIX",
                "Programming Language :: Python :: 2.7",
                "Programming Language :: Python :: 3.5",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
                ]
-install_requires=["PyMca5>=5.1.2"]
+install_requires = ["PyMca5>=5.1.2"]
 
 if __name__ == "__main__":
     setup(name=name,
@@ -55,4 +59,3 @@ if __name__ == "__main__":
           long_description=long_description,
           install_requires=install_requires,
           )
-
