@@ -21,7 +21,13 @@
 # THE SOFTWARE.
 #
 #############################################################################*/
-"""Command line interface to execute main() functions in PyMca5 modules.
+"""This program can be used to execute any PyMca5 module by providing a module
+name as the first command line argument. The module name can be either a fully
+qualified name, or a short module name.
+
+A few shortcut commands, corresponding to legacy PyMca scripts, are also
+understood: edfviewer, elementsinfo, mca2edf, peakidentifier, pymca,
+pymcabatch, pymcapostbatch, pymcaroitool, rgbcorrelator
 """
 import argparse
 import sys
@@ -29,18 +35,25 @@ from importlib import import_module
 
 __authors__ = ["P. Knobel"]
 __license__ = "MIT"
-__date__ = "01/08/2016"
+__date__ = "02/08/2016"
 
-# small number of shortcut commands
+# shortcut commands (previous scripts)
 shortcuts = {
-    'edfviewer': "EdfFileSimpleViewer"
-    # TODO
+    'edfviewer': "PyMca5.PyMcaGui.pymca.EdfFileSimpleViewer",
+    'elementsinfo': "PyMca5.PyMcaGui.physics.xrf.ElementsInfo",
+    'mca2edf': "PyMca5.PyMcaGui.pymca.Mca2Edf",
+    'peakidentifier': "PyMca5.PyMcaGui.PeakIdentifier",
+    'pymca': "PyMca5.PyMcaGui.pymca.PyMcaMain",
+    'pymcabatch': "PyMca5.PyMcaGui.pymca.PyMcaBatch",
+    'pymcapostbatch': "PyMca5.PyMcaGui.pymca.PyMcaPostBatch",
+    'pymcaroitool': "PyMca5.PyMcaGui.pymca.QStackWidget",
+    'rgbcorrelator': "PyMca5.PyMcaGui.pymca.PyMcaPostBatch",
 }
 
 parser = argparse.ArgumentParser(description=__doc__)
 # first command line argument
 parser.add_argument('command',
-                    nargs='?', default="PyMcaMain",
+                    nargs='?', default="PyMca5.PyMcaGui.pymca.PyMcaMain",
                     help='Name of module whose main() function you want to' +
                          ' run, or "help" to print a help message. If this' +
                          ' argument is omitted, run "PyMcaMain"')
@@ -83,7 +96,6 @@ if m is None:
 
 # help
 if print_docstring:
-    print("i can haz ")
     if m.__doc__ is not None:
         msg = "Module docstring:\n" + m.__doc__ + "\n\n"
     else:
