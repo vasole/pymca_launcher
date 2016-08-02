@@ -24,32 +24,43 @@
 """Command line interface to execute main() functions in PyMca5 modules.
 """
 import argparse
-# import pkgutil
-import os
 import sys
 from importlib import import_module
 
 __authors__ = ["P. Knobel"]
 __license__ = "MIT"
-__date__ = "22/07/2016"
+__date__ = "01/08/2016"
 
 # small number of shortcut commands
 shortcuts = {
-    '': "PyMcaMain",
     'edfviewer': "EdfFileSimpleViewer"
-# TODO
+    # TODO
 }
 
-parser = argparse.ArgumentParser(description='pymca generic launcher')
+parser = argparse.ArgumentParser(description=__doc__)
 # first command line argument
 parser.add_argument('command',
-                    nargs='?', default="",
-                    help='name of module whose main() function you want to run')
+                    nargs='?', default="PyMcaMain",
+                    help='Name of module whose main() function you want to' +
+                         ' run, or "help" to print a help message. If this' +
+                         ' argument is omitted, run "PyMcaMain"')
 # remaining command-line arguments
-parser.add_argument('mainargs', nargs='*',
-                    help='arguments passed to the main() function')
+parser.add_argument('mainargs', nargs=argparse.REMAINDER,
+                    help='Arguments passed to the main() function, or name' +
+                         ' of a module if command is "help"')
 
 args = parser.parse_args()
+
+print_docstring = False
+if args.command == "help":
+    if args.mainargs:
+        # pymca_launcher.py help command
+        print_docstring = True
+        args.command = args.mainargs[0]
+    else:
+        # pymca_launcher.py help
+        parser.print_help()
+        parser.exit()
 
 if args.command in shortcuts:
     modname = shortcuts[args.command]
@@ -67,31 +78,42 @@ except ImportError:
         m = None
 
 if m is None:
-    print("No module or command " + args.command + " found")
+    print("No module " + modname + " found")
     sys.exit(1)
 
-try:
+# help
+if print_docstring:
+    print("i can haz ")
+    if m.__doc__ is not None:
+        msg = "Module docstring:\n" + m.__doc__ + "\n\n"
+    else:
+        msg = "No module level docstring found\n\n"
+    if hasattr(m, "main"):
+        if m.main.__doc__ is not None:
+            msg += "main() docstring:\n" + m.main.__doc__ + "\n"
+        else:
+            msg += "No docstring found for main() function\n"
+    else:
+        msg += "No main() function found\n"
+    print(msg)
+    sys.exit(0)
+
+# remove launcher script from the command line
+sys.argv = sys.argv[1:]
+
+# run main() function
+if hasattr(m, "main"):
     main = getattr(m, "main")
-except AttributeError:
-    # if module does not have a amin function, try executing the source file
-    # (is this a good idea?)
-    if not args.command == '':
-        # remove module or command for command-line arguments
-        sys.argv = sys.argv[1:]
+    status = main(*args.mainargs)
+    sys.exit(status)
+
+# try executing the source file
+else:
     fname = m.__file__
     if sys.version < '3.0':
         execfile(fname)
     else:
         exec(compile(open(fname).read(), fname, 'exec'))
-else:
-    # This will work for modules with a main() function
-    status = main(*args.mainargs)
-
-    # if status is an int, it is considered an exit status
-    # (could be 0 for success, 1 for general errors, 2 for command line syntax error…)
-    # None is equivalent to 0, any other object is printed to stderr and results
-    # in an exit code of 1
-    sys.exit(status)
 
 
-# TODO: help (main.__doc__), rst2man
+# TODO: rst2man
