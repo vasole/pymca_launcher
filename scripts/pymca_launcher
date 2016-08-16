@@ -67,7 +67,7 @@ parser.add_argument('mainargs', nargs=argparse.REMAINDER,
 if len(sys.argv) > 1 and sys.argv[1].startswith("-")\
         and not sys.argv[1] in ["-h", "--help"]:
     # special case with no command but optional arguments for PyMcaMain
-    # example: pymca_launcher.py -f ...
+    # example: pymca_launcher -f ...
     # In that case, the parser raises a SystemExit (unrecognized arguments)
     class Args:
         command = "PyMca5.PyMcaGui.pymca.PyMcaMain"
@@ -81,11 +81,11 @@ else:
 print_docstring = False
 if args.command == "help":
     if args.mainargs:
-        # pymca_launcher.py help command
+        # pymca_launcher help command
         print_docstring = True
         args.command = args.mainargs[0]
     else:
-        # pymca_launcher.py help
+        # pymca_launcher help
         parser.print_help()
         parser.exit()
 
