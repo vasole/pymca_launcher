@@ -1,3 +1,4 @@
+#! /usr/bin/python 
 # coding: utf-8
 #/*##########################################################################
 # Copyright (C) 2016 European Synchrotron Radiation Facility
@@ -35,7 +36,7 @@ from importlib import import_module
 
 __authors__ = ["P. Knobel"]
 __license__ = "MIT"
-__date__ = "02/08/2016"
+__date__ = "16/08/2016"
 
 # shortcut commands (previous scripts)
 shortcuts = {
@@ -57,12 +58,25 @@ parser.add_argument('command',
                     help='Name of module whose main() function you want to' +
                          ' run, or "help" to print a help message. If this' +
                          ' argument is omitted, run "PyMcaMain"')
+
 # remaining command-line arguments
 parser.add_argument('mainargs', nargs=argparse.REMAINDER,
                     help='Arguments passed to the main() function, or name' +
                          ' of a module if command is "help"')
 
-args = parser.parse_args()
+if len(sys.argv) > 1 and sys.argv[1].startswith("-")\
+        and not sys.argv[1] in ["-h", "--help"]:
+    # special case with no command but optional arguments for PyMcaMain
+    # example: pymca_launcher.py -f ...
+    # In that case, the parser raises a SystemExit (unrecognized arguments)
+    class Args:
+        command = "PyMca5.PyMcaGui.pymca.PyMcaMain"
+        parser.mainargs = sys.argv[1:]
+
+    args = Args()
+else:
+    args = parser.parse_args()
+
 
 print_docstring = False
 if args.command == "help":
@@ -126,6 +140,5 @@ else:
         execfile(fname)
     else:
         exec(compile(open(fname).read(), fname, 'exec'))
-
 
 # TODO: rst2man
