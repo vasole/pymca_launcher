@@ -31,6 +31,7 @@ understood: edfviewer, elementsinfo, mca2edf, peakidentifier, pymca,
 pymcabatch, pymcapostbatch, pymcaroitool, rgbcorrelator
 """
 import argparse
+import os
 import sys
 from importlib import import_module
 
@@ -54,7 +55,7 @@ shortcuts = {
 parser = argparse.ArgumentParser(description=__doc__)
 # first command line argument
 parser.add_argument('command',
-                    nargs='?', default="PyMca5.PyMcaGui.pymca.PyMcaMain",
+                    nargs='?',
                     help='Name of module whose main() function you want to' +
                          ' run, or "help" to print a help message. If this' +
                          ' argument is omitted, run "PyMcaMain"')
@@ -70,13 +71,12 @@ if len(sys.argv) > 1 and sys.argv[1].startswith("-")\
     # example: pymca_launcher -f ...
     # In that case, the parser raises a SystemExit (unrecognized arguments)
     class Args:
-        command = "PyMca5.PyMcaGui.pymca.PyMcaMain"
-        parser.mainargs = sys.argv[1:]
+        command = None
+        mainargs = sys.argv[1:]
 
     args = Args()
 else:
     args = parser.parse_args()
-
 
 print_docstring = False
 if args.command == "help":
@@ -91,6 +91,8 @@ if args.command == "help":
 
 if args.command in shortcuts:
     modname = shortcuts[args.command]
+elif args.command is None:
+    modname = "PyMca5.PyMcaGui.pymca.PyMcaMain"
 else:
     modname = args.command
 
@@ -125,7 +127,8 @@ if print_docstring:
     sys.exit(0)
 
 # remove launcher script from the command line
-sys.argv = sys.argv[1:]
+if args.command is not None:
+    sys.argv = sys.argv[1:]
 
 # run main() function
 if hasattr(m, "main"):
@@ -133,12 +136,12 @@ if hasattr(m, "main"):
     status = main(*args.mainargs)
     sys.exit(status)
 
-# try executing the source file
+# try executing the .py source file
 else:
     fname = m.__file__
+    if fname.endswith(".pyc") and os.path.exists(fname[:-1]):
+        fname = fname[:-1]
     if sys.version < '3.0':
         execfile(fname)
     else:
         exec(compile(open(fname).read(), fname, 'exec'))
-
-# TODO: rst2man
