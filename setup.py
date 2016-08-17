@@ -20,9 +20,12 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "2/07/2016"
+__date__ = "16/08/2016"
 
+import glob
+import os
 from setuptools import setup
+
 
 version = "5.1.2"
 name = "pymca"
@@ -31,6 +34,9 @@ description = "pymca"
 f = open("README.rst")
 long_description = f.read()
 f.close()
+
+scripts = glob.glob(os.path.join("scripts", "*"))
+
 classifiers = ["Development Status :: 5 - Production/Stable",
                "Environment :: Console",
                "Environment :: MacOS X",
@@ -59,4 +65,5 @@ if __name__ == "__main__":
           description=description,
           long_description=long_description,
           install_requires=install_requires,
+          scripts=scripts
           )
