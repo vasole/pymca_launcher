@@ -1,5 +1,6 @@
 include README.rst
 include MANIFEST.in
+include cx_setup.py
 include setup.py
 include setup.cfg
 include LICENSE
