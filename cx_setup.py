@@ -31,20 +31,37 @@ if sys.platform != 'win32':
 
 import PyMca5
 import fisx
+import hdf5plugin
+try:
+    import h5py
+except ImportError:
+    h5py = None
+try:
+    import ctypes
+    import OpenGL
+    from PyMca5 import Object3D
+except ImportError:
+    Object3D = None
+    ctypes = None
+    OpenGL = None
+
 # import silx.resources
 # SILX_DATA_DIR = os.path.dirname(silx.resources.__file__)
 
-packages = ["PyMca5"]  # , "silx"]
-
-includes = ["hdf5plugin"]
-
-excludes = ["tcl", "tk"]     # does not work. Why?
-
-special_modules = [PyMca5, fisx]
+# special modules are included completely, with their data files
+special_modules = [PyMca5, fisx, h5py, OpenGL, hdf5plugin, ctypes]
 special_modules_dir = [os.path.dirname(mod.__file__) for mod in special_modules if mod is not None]
 include_files = [(dir_, os.path.basename(dir_)) for dir_ in special_modules_dir]
 
 # include_files.append((SILX_DATA_DIR,  os.path.join('silx', 'resources')))
+
+packages = ["PyMca5"]  # ["silx"]
+
+includes = []
+
+# modules excluded from library.zip
+excludes = ["tcl", "tk", "OpenGL", "scipy",
+            ]
 
 build_options = {
     "packages": packages,
@@ -57,8 +74,8 @@ install_options = {}
 
 executables = [
     Executable('scripts/pymca_launcher',
-               base="Win32GUI" if sys.platform == 'win32' else None,
-               # base="Console" if platform.system() == 'Windows' else None,
+               # base="Win32GUI" if sys.platform == 'win32' else None,
+               base="Console" if sys.platform == 'win32' else None,
                compress=True)
 ]
 
