@@ -96,17 +96,29 @@ elif args.command is None:
 else:
     modname = args.command
 
-try:
-    # if command is a fully qualified module name
-    m = import_module(modname)
-except ImportError:
-    # try prepending PyMca5
+
+def my_import(name):
     try:
-        m = import_module("PyMca5.PyMca." + modname)
+        m_ = import_module(name)
     except ImportError:
-        m = None
+        # try relative import (should work for frozen binary)
+        try:
+            m_ =__import__(name, level=1)
+        except ImportError:
+            m_ = None
+    return m_
+
+
+if not modname.startswith("PyMca5."):
+    modname = "PyMca5.PyMca." + modname
+
+m = my_import(modname)
+
 
 if m is None:
+    if getattr(sys, 'frozen', False):
+        a = __import__("PyMca5.PyMcaGui", level=1)
+
     print("No module " + modname + " found")
     sys.exit(1)
 
@@ -141,6 +153,7 @@ else:
     fname = m.__file__
     if fname.endswith(".pyc") and os.path.exists(fname[:-1]):
         fname = fname[:-1]
+
     if sys.version < '3.0':
         execfile(fname)
     else:
