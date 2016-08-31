@@ -23,11 +23,7 @@
 # ###########################################################################*/
 from cx_Freeze import setup, Executable
 import os
-import sys
-
-if sys.platform != 'win32':
-        raise NotImplementedError("Frozen application building " +
-                                  "is only supported for Windows")
+import sys, glob
 
 import PyMca5
 import fisx
@@ -53,30 +49,32 @@ special_modules = [PyMca5, fisx, h5py, OpenGL, hdf5plugin, ctypes]
 special_modules_dir = [os.path.dirname(mod.__file__) for mod in special_modules if mod is not None]
 include_files = [(dir_, os.path.basename(dir_)) for dir_ in special_modules_dir]
 
+
+
 # include_files.append((SILX_DATA_DIR,  os.path.join('silx', 'resources')))
 
 packages = ["PyMca5"]  # ["silx"]
 
 includes = []
 
+
 # modules excluded from library.zip
-excludes = ["tcl", "tk", "OpenGL", "scipy",
-            ]
+excludes = ["collections.abc", "tcl", "tk", "OpenGL", "scipy", ]
 
 build_options = {
     "packages": packages,
     "includes": includes,
     "include_files": include_files,
-    "excludes": excludes,
-    "compressed": True, }
+    "excludes": excludes, }
+    #"compressed": True, }
 
 install_options = {}
 
 executables = [
     Executable('scripts/pymca_launcher',
                # base="Win32GUI" if sys.platform == 'win32' else None,
-               base="Console" if sys.platform == 'win32' else None,
-               compress=True)
+               base="Console" if sys.platform == 'win32' else None,)
+               # compress=True)
 ]
 
 setup(name='pymca',
