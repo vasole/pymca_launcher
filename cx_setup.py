@@ -40,7 +40,8 @@ except ImportError:
     Object3D = None
     ctypes = None
     OpenGL = None
-
+    
+# TODO: future dependency
 # import silx.resources
 # SILX_DATA_DIR = os.path.dirname(silx.resources.__file__)
 
@@ -49,8 +50,10 @@ special_modules = [PyMca5, fisx, h5py, OpenGL, hdf5plugin, ctypes]
 special_modules_dir = [os.path.dirname(mod.__file__) for mod in special_modules if mod is not None]
 include_files = [(dir_, os.path.basename(dir_)) for dir_ in special_modules_dir]
 
+# TODO: check if this line is still necessary
+# include_files.append(("qtconffile", "qt.conf"))
 
-
+# TODO: future dependency
 # include_files.append((SILX_DATA_DIR,  os.path.join('silx', 'resources')))
 
 packages = ["PyMca5"]  # ["silx"]
