@@ -106,42 +106,61 @@ except ImportError:
     except ImportError:
         m = None
 
-if m is None:
-    print("No module " + modname + " found")
-    sys.exit(1)
 
-# help
-if print_docstring:
-    if m.__doc__ is not None:
-        msg = "Module docstring:\n" + m.__doc__ + "\n\n"
-    else:
-        msg = "No module level docstring found\n\n"
-    if hasattr(m, "main"):
-        if m.main.__doc__ is not None:
-            msg += "main() docstring:\n" + m.main.__doc__ + "\n"
-        else:
-            msg += "No docstring found for main() function\n"
-    else:
-        msg += "No main() function found\n"
-    print(msg)
-    sys.exit(0)
-
-# remove launcher script from the command line
-if args.command is not None:
-    sys.argv = sys.argv[1:]
-
-# run main() function
-if hasattr(m, "main"):
-    main = getattr(m, "main")
-    status = main(*args.mainargs)
-    sys.exit(status)
-
-# try executing the .py source file
-else:
-    fname = m.__file__
-    if fname.endswith(".pyc") and os.path.exists(fname[:-1]):
-        fname = fname[:-1]
+def execute(pyfname):
+    if not os.path.isfile(pyfname):
+        raise IOError("Could not find file " + pyfname)
     if sys.version < '3.0':
-        execfile(fname)
+        execfile(pyfname)
     else:
-        exec(compile(open(fname).read(), fname, 'exec'))
+        exec (compile(open(pyfname).read(), pyfname, 'exec'))
+
+
+if m is not None:
+    # help
+    if print_docstring:
+        if m.__doc__ is not None:
+            msg = "Module docstring:\n" + m.__doc__ + "\n\n"
+        else:
+            msg = "No module level docstring found\n\n"
+        if hasattr(m, "main"):
+            if m.main.__doc__ is not None:
+                msg += "main() docstring:\n" + m.main.__doc__ + "\n"
+            else:
+                msg += "No docstring found for main() function\n"
+        else:
+            msg += "No main() function found\n"
+        print(msg)
+        sys.exit(0)
+
+    # remove launcher script from the command line
+    if args.command is not None:
+        sys.argv = sys.argv[1:]
+
+    # run main() function
+    if hasattr(m, "main"):
+        main = getattr(m, "main")
+        status = main(*args.mainargs)
+        sys.exit(status)
+
+    # try executing the .py source file
+    else:
+        fname = m.__file__
+        if fname.endswith(".pyc") and os.path.exists(fname[:-1]):
+            fname = fname[:-1]
+        execute(fname)
+
+else:
+    # frozen binary issue on linux
+    print("Could not import module " + modname)
+    fname = os.path.join(os.path.dirname(sys.executable),
+                         *modname.split(".")) + ".py"
+
+    if os.path.isfile(fname):
+        print("Trying to execute " + fname)
+        execute(fname)
+    else:
+        print("Failed to execute %s" % modname)
+        sys.exit(1)
+
+
