@@ -4,4 +4,4 @@ include cx_setup.py
 include setup.py
 include setup.cfg
 include LICENSE
-recursive-include scripts *.py *.bat
+recursive-include scripts pymca*
