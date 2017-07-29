@@ -27,7 +27,7 @@ import os
 from setuptools import setup
 
 
-version = "5.1.3"
+version = "5.1.4"
 name = "pymca"
 author = "ESRF - Data Analysis Unit"
 description = "pymca"
@@ -51,11 +51,12 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Operating System :: POSIX",
                "Programming Language :: Python :: 2.7",
                "Programming Language :: Python :: 3.5",
+               "Programming Language :: Python :: 3.6",
                "Topic :: Scientific/Engineering :: Chemistry",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
                ]
-install_requires = ["PyMca5>=5.1.3"]
+install_requires = ["PyMca5>=5.1.4"]
 
 if __name__ == "__main__":
     setup(name=name,
