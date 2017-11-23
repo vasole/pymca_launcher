@@ -20,14 +20,14 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "31/08/2017"
+__date__ = "03/09/2017"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.2.0"
+version = "5.2.1"
 name = "pymca"
 author = "ESRF - Data Analysis Unit"
 description = "pymca"
@@ -56,7 +56,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
                ]
-install_requires = ["PyMca5>=5.2.0"]
+install_requires = ["PyMca5>=5.2.1"]
 
 if __name__ == "__main__":
     setup(name=name,
