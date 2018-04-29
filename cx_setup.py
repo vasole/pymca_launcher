@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 #
 # ###########################################################################*/
-from cx_Freeze import setup, Executable
+from cx_Freeze import setup, Executable, hooks
 import os
 import sys, glob
 
@@ -45,9 +45,10 @@ except ImportError:
 # TODO: future dependency
 # import silx.resources
 # SILX_DATA_DIR = os.path.dirname(silx.resources.__file__)
+import silx
 
 # special modules are included completely, with their data files
-special_modules = [PyMca5, fisx, h5py, OpenGL, hdf5plugin, ctypes, collections]
+special_modules = [PyMca5, silx, fisx, h5py, OpenGL, hdf5plugin, ctypes, collections]
 special_modules_dir = [os.path.dirname(mod.__file__) for mod in special_modules if mod is not None]
 include_files = [(dir_, os.path.basename(dir_)) for dir_ in special_modules_dir]
 
@@ -61,9 +62,14 @@ packages = ["PyMca5"]  # ["silx"]
 
 includes = []
 
+def dummy(*var, **kw):
+    return
+
+hooks.load_tkinter = dummy
+
 
 # modules excluded from library.zip
-excludes = ["collections.abc", "tcl", "tk", "OpenGL", "scipy"]
+excludes = ["tcl", "tk", "OpenGL", "scipy"]
 
 build_options = {
     "packages": packages,
