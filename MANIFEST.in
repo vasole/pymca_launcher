@@ -4,4 +4,7 @@ include cx_setup.py
 include setup.py
 include setup.cfg
 include LICENSE
+include nsisscript.nsi.in
+include PyMca.txt
 recursive-include scripts pymca*
+recursive-include icons PyMca*
