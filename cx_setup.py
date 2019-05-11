@@ -136,6 +136,14 @@ try:
 except ImportError:
     print("silx not available, not added to the frozen executables")
 
+try:
+    import freeart
+    import tomogui
+    special_modules += [os.path.dirname(freeart.__file__),
+                        os.path.dirname(tomogui.__file__)]
+except ImportError:
+    print("tomogui not available, not added to the frozen executables")
+
 # package used by silx and probably others that is not always added properly
 # always add it because it is small
 try:
@@ -190,6 +198,14 @@ build_options = {
 
 install_options = {}
 
+# attempt to cleanup build directory
+if os.path.exists("build"):
+    try:
+        shutil.rmtree("build")
+    except:
+        print("WARNING: Cannot cleanup build directory")
+    time.sleep(0.1)
+
 # generate intermediate scripts to deal with the path during execution
 tmpDir = os.path.join("build", "tmp")
 if os.path.exists(tmpDir):
@@ -205,6 +221,9 @@ for f in list(exec_dict.keys()):
     outfile = open(outname, "w")
     outfile.write("import os\n")
     outfile.write("import ctypes\n")
+    # weird, somehow writing something solves startup crashes that
+    # do not occur when running in debug mode
+    outfile.write("print('')\n")
     magic = 'os.environ["PATH"] += os.path.dirname(os.path.dirname(ctypes.__file__))\n'
     outfile.write(magic)
     for line in infile:
