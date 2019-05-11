@@ -198,6 +198,14 @@ build_options = {
 
 install_options = {}
 
+# attempt to cleanup build directory
+if os.path.exists("build"):
+    try:
+        shutil.rmtree("build")
+    except:
+        print("WARNING: Cannot cleanup build directory")
+    time.sleep(0.1)
+
 # generate intermediate scripts to deal with the path during execution
 tmpDir = os.path.join("build", "tmp")
 if os.path.exists(tmpDir):
