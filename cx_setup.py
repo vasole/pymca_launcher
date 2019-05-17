@@ -30,8 +30,9 @@ import shutil
 from cx_Freeze import setup, Executable, hooks
 from cx_Freeze import version as cxVersion
 
-if not sys.platform.startswith("win"):
-    raise RuntimeError("Only windows supported!")
+if not sys.platform.startswith("win") and\
+   not sys.platform.startswith("linux"):
+    raise RuntimeError("Only windows and manylinux supported!")
 if not (sys.version.startswith("3.7") or sys.version.startswith("3.6")):
     raise RuntimeError("Only Python 3.6 and 3.7 supported!")
 if cxVersion.startswith('4.'):
@@ -259,11 +260,25 @@ else:
     filesToRemove = []
     print("Your list of files to remove needs to be updated")
 
-exe_win_dir = os.path.join("build",
+if sys.platform.startswith("win"):
+    exe_win_dir = os.path.join("build",
                            "exe.win-amd64-%d.%d" %
                            (sys.version_info[0], sys.version_info[1]))
+    REPLACE_BIG_FILES = True    
+    REMOVE_DUPLICATED_MODULES = True
+    REMOVE_REPEATED_DLL = True
+    RENAME_EXECUTABLES = False
+else:
+    exe_win_dir = os.path.join("build",
+                           "exe.%s-x86_64-%d.%d" %
+                           (sys.platform,
+                            sys.version_info[0], sys.version_info[1]))
 
-REPLACE_BIG_FILES = True
+    REPLACE_BIG_FILES = False
+    REMOVE_DUPLICATED_MODULES = False
+    REMOVE_REPEATED_DLL = False
+    RENAME_EXECUTABLES = True
+
 if REPLACE_BIG_FILES:
     # replace excessively big files
     # somehow some modules are bigger in the installation than just
@@ -284,7 +299,6 @@ if REPLACE_BIG_FILES:
         shutil.copytree(dirname, destination)
 
 
-REMOVE_DUPLICATED_MODULES = True
 if REMOVE_DUPLICATED_MODULES:
     # remove duplicated modules
     import shutil
@@ -310,7 +324,6 @@ if REMOVE_DUPLICATED_MODULES:
         else:
             print("NOT DELETING ", destination)
 
-REMOVE_REPEATED_DLL = True
 if REMOVE_REPEATED_DLL:
     work0 = []
     work1 = []
@@ -328,6 +341,52 @@ if REMOVE_REPEATED_DLL:
     work1.reverse()
     for item in work1:
         shutil.rmtree(item)
+
+if RENAME_EXECUTABLES:
+    #rename the executables to .exe for easier handling by the start scripts
+    for f in list(exec_dict.keys()):
+        executable = os.path.join(exe_win_dir, f)
+        if os.path.exists(executable):
+            os.rename(executable, executable+".exe")
+        #create the start script
+        text  = "#!/bin/bash\n"
+        text += 'if test -e "./%s.exe"; then\n' % f
+        text += '    export LD_LIBRARY_PATH=./:${LD_LIBRARY_PATH}\n'
+        text += '    exec ./%s.exe $*\n' % f
+        text += 'else\n'
+        text += '    if test -z "${PYMCAHOME}" ; then\n'
+        text += '        thisdir=`dirname $0` \n'
+        text += '        export PYMCAHOME=${thisdir}\n'
+        text += '    fi\n'
+        text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${LD_LIBRARY_PATH}\n'
+        text += '    exec ${PYMCAHOME}/%s.exe $*\n' % f
+        text += 'fi\n'
+        nfile = open(executable, 'w')
+        nfile.write(text)
+        nfile.close()
+        os.system("chmod 775 %s"  % executable)
+        #generate the lowercase commands
+        if f == "PyMcaMain":
+            os.system("cp -f %s %s" % (executable,
+                                       os.path.join(exe_win_dir, 'pymca')))
+        elif f == "QStackWidget":
+            os.system("cp -f %s %s" % (executable,
+                                       os.path.join(exe_win_dir, 'pymcaroitool')))
+        elif f == "EdfFileSimpleViewer":
+            os.system("cp -f %s %s" % (executable,
+                                       os.path.join(exe_win_dir, 'edfviewer')))
+        else:
+            os.system("cp -f %s %s" % (executable,
+                                       os.path.join(exe_win_dir, f.lower())))
+            if f == "PyMcaPostBatch":
+                os.system("cp -f %s %s" % (executable,
+                                           os.path.join(exe_win_dir,
+                                           'rgbcorrelator')))
+
+if not sys.platform.startswith("win"):
+    # rename final folder
+    os.system("mv %s %s" % (exe_win_dir, os.path.join("build",
+                                         "PyMca%s" % PyMca5.__version__)))
 
 #  generation of the NSIS executable
 nsis = os.path.join("\Program Files (x86)", "NSIS", "makensis.exe")
@@ -358,4 +417,3 @@ if sys.platform.startswith("win") and os.path.exists(nsis):
     cmd = '"%s" %s' % (nsis, outFile)
     print(cmd)
     os.system(cmd)
-
