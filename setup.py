@@ -20,7 +20,7 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "12/04/2019"
+__date__ = "11/07/2019"
 
 import glob
 import os
@@ -52,6 +52,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Programming Language :: Python :: 2.7",
                "Programming Language :: Python :: 3.6",
                "Programming Language :: Python :: 3.7",
+               "Programming Language :: Python :: 3.8",
                "Topic :: Scientific/Engineering :: Chemistry",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
