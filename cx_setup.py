@@ -154,6 +154,29 @@ try:
 except ImportError:
     print("pkg_resources could not be imported")
 
+# pyopencl needs special treatment
+try:
+    import pyopencl
+    import mako
+    import cffi
+    import pytools
+    OPENCL = True
+except:
+    OPENCL = False
+
+if sys.platform.lower().startswith("linux"):
+    # no sense to freeze
+    OPENCL = False
+
+if OPENCL:
+    special_modules.append(os.path.dirname(pyopencl.__file__))
+    special_modules.append(os.path.dirname(mako.__file__))
+    special_modules.append(os.path.dirname(cffi.__file__))
+    special_modules.append(os.path.dirname(pytools.__file__))
+    includes.append("decorator")
+else:
+    excludes.append("pyopencl")
+
 # other generic packages not always properly detected but that are small and
 # desirable to have
 import collections
@@ -382,6 +405,38 @@ if RENAME_EXECUTABLES:
                 os.system("cp -f %s %s" % (executable,
                                            os.path.join(exe_win_dir,
                                            'rgbcorrelator')))
+if OPENCL:
+    # pyopencl __init__.py needs to be patched
+    initFile = os.path.join(exe_win_dir, "pyopencl", "__init__.py")
+    print("###################################################################")
+    print("Patching pyopencl file")
+    print(initFile)
+    print("###################################################################")
+    f = open(initFile, "r")
+    content = f.readlines()
+    f.close()
+    i = 0
+    i0 = 0
+    for line in content:
+        if "def _find_pyopencl_include_path():" in line:
+            i0 = i - 1
+        elif (i0 != 0) and ("}}}" in line):
+            i1 = i
+            break
+        i += 1
+    f = open(initFile, "w")
+    for i in range(0, i0):
+        f.write(content[i])
+    txt ='\n'
+    txt +='def _find_pyopencl_include_path():\n'
+    txt +='     from os.path import dirname, join, realpath\n'
+    txt +="     return '\"%s\"' % join(realpath(dirname(__file__)), \"cl\")"
+    txt +="\n"
+    txt +="\n"
+    f.write(txt)
+    for line in content[i1:]:
+        f.write(line)
+    f.close()    
 
 if not sys.platform.startswith("win"):
     # rename final folder
