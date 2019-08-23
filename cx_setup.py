@@ -290,7 +290,7 @@ if sys.platform.startswith("win"):
     exe_win_dir = os.path.join("build",
                            "exe.win-amd64-%d.%d" %
                            (sys.version_info[0], sys.version_info[1]))
-    REPLACE_BIG_FILES = True    
+    REPLACE_BIG_FILES = True
     REMOVE_DUPLICATED_MODULES = True
     REMOVE_REPEATED_DLL = True
     RENAME_EXECUTABLES = False
@@ -391,7 +391,7 @@ if RENAME_EXECUTABLES:
         text += '    fi\n'
         if QTDIR:
             text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${PYMCAHOME}/Qt/lib:${LD_LIBRARY_PATH}\n'
-        else:    
+        else:
             text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${LD_LIBRARY_PATH}\n'
         text += '    exec ${PYMCAHOME}/%s.exe $*\n' % f
         text += 'fi\n'
@@ -424,7 +424,7 @@ if QTDIR:
     os.system("cp -R -f %s %s" % (QTDIR, os.path.join(destinationDir, "Qt")))
     for d in ["mkspecs", "doc", "include"]:
         target = os.path.join(destinationDir, "Qt", d)
-        if os.path.exists(target):       
+        if os.path.exists(target):
             os.system("rm -rf %s" % target)
 
     # generate qt.conf file
@@ -468,19 +468,17 @@ if OPENCL:
     f.write(txt)
     for line in content[i1:]:
         f.write(line)
-    f.close()    
+    f.close()
 
 if not sys.platform.startswith("win"):
     # rename final folder
     txt = "PyMca%s" % PyMca5.__version__
     os.system("mv %s %s" % (exe_win_dir, os.path.join("build", txt)))
-    print("Before %s" % os.getcwd())
     os.chdir("build")
     os.system("tar -cvzf pymca%s-linux.tgz ./%s" % (PyMca5.__version__, txt))
     os.system("mv *.tgz ../")
     os.chdir("../")
-    print("After %s" % os.getcwd())
-    
+
 
 #  generation of the NSIS executable
 nsis = os.path.join("\Program Files (x86)", "NSIS", "makensis.exe")
