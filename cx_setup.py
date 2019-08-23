@@ -38,7 +38,10 @@ if not (sys.version.startswith("3.7") or sys.version.startswith("3.6")):
 if cxVersion.startswith('4.'):
     raise RuntimeError("At this point only cx_Freeze 5.1.1 supported")
 elif cxVersion != '5.1.1':
-    print("Warning: Only cx_Freeze version 5.1.1 tested and only under windows")
+    print("Warning: Only cx_Freeze version 5.1.1 tested")
+elif sys.version.startswith("3.7"):
+    print("Make sure freezer.py is patched according to PR #395")
+    print("https://github.com/anthony-tuininga/cx_Freeze/pull/395")
 
 if "build_exe" not in sys.argv:
     print("Usage:")
@@ -291,6 +294,7 @@ if sys.platform.startswith("win"):
     REMOVE_DUPLICATED_MODULES = True
     REMOVE_REPEATED_DLL = True
     RENAME_EXECUTABLES = False
+    QTDIR = False
 else:
     exe_win_dir = os.path.join("build",
                            "exe.%s-x86_64-%d.%d" %
@@ -301,6 +305,7 @@ else:
     REMOVE_DUPLICATED_MODULES = False
     REMOVE_REPEATED_DLL = False
     RENAME_EXECUTABLES = True
+    QTDIR = os.getenv("QTDIR")
 
 if REPLACE_BIG_FILES:
     # replace excessively big files
@@ -374,14 +379,20 @@ if RENAME_EXECUTABLES:
         #create the start script
         text  = "#!/bin/bash\n"
         text += 'if test -e "./%s.exe"; then\n' % f
-        text += '    export LD_LIBRARY_PATH=./:${LD_LIBRARY_PATH}\n'
+        if QTDIR:
+            text += '    export LD_LIBRARY_PATH=./:./Qt/lib:${LD_LIBRARY_PATH}\n'
+        else:
+            text += '    export LD_LIBRARY_PATH=./:${LD_LIBRARY_PATH}\n'
         text += '    exec ./%s.exe $*\n' % f
         text += 'else\n'
         text += '    if test -z "${PYMCAHOME}" ; then\n'
         text += '        thisdir=`dirname $0` \n'
         text += '        export PYMCAHOME=${thisdir}\n'
         text += '    fi\n'
-        text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${LD_LIBRARY_PATH}\n'
+        if QTDIR:
+            text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${PYMCAHOME}/Qt/lib:${LD_LIBRARY_PATH}\n'
+        else:    
+            text += '    export LD_LIBRARY_PATH=${PYMCAHOME}:${LD_LIBRARY_PATH}\n'
         text += '    exec ${PYMCAHOME}/%s.exe $*\n' % f
         text += 'fi\n'
         nfile = open(executable, 'w')
@@ -405,6 +416,27 @@ if RENAME_EXECUTABLES:
                 os.system("cp -f %s %s" % (executable,
                                            os.path.join(exe_win_dir,
                                            'rgbcorrelator')))
+if QTDIR:
+    # copy the Qt library directory and creat the qt.conf file
+    destinationDir = exe_win_dir
+    if not os.path.exists(os.path.join(QTDIR, "lib")):
+        print("Cannot find lib folder. Invalid QTDIR <%s>" % QTDIR)
+    os.system("cp -R -f %s %s" % (QTDIR, os.path.join(destinationDir, "Qt")))
+    for d in ["mkspecs", "doc", "include"]:
+        target = os.path.join(destinationDir, "Qt", d)
+        if os.path.exists(target):       
+            os.system("rm -rf %s" % target)
+
+    # generate qt.conf file
+    qtconf = os.path.join(destinationDir, "qt.conf")
+    if os.path.exists(qtconf):
+        os.remove(qtconf)
+    text = b"[Paths]\n"
+    text += b"Prefix = ./Qt\n"
+    f = open(qtconf, "wb")
+    f.write(text)
+    f.close()
+
 if OPENCL:
     # pyopencl __init__.py needs to be patched
     initFile = os.path.join(exe_win_dir, "pyopencl", "__init__.py")
@@ -440,8 +472,15 @@ if OPENCL:
 
 if not sys.platform.startswith("win"):
     # rename final folder
-    os.system("mv %s %s" % (exe_win_dir, os.path.join("build",
-                                         "PyMca%s" % PyMca5.__version__)))
+    txt = "PyMca%s" % PyMca5.__version__
+    os.system("mv %s %s" % (exe_win_dir, os.path.join("build", txt)))
+    print("Before %s" % os.getcwd())
+    os.chdir("build")
+    os.system("tar -cvzf pymca%s-linux.tgz ./%s" % (PyMca5.__version__, txt))
+    os.system("mv *.tgz ../")
+    os.chdir("../")
+    print("After %s" % os.getcwd())
+    
 
 #  generation of the NSIS executable
 nsis = os.path.join("\Program Files (x86)", "NSIS", "makensis.exe")
