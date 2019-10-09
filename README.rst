@@ -21,7 +21,7 @@ Dependencies
 
 PyMca5, fisx and numpy for command line use.
 
-Matplotlib and one of PyQt5, PySide2, PyQt4 or to use the graphical interfaces.
+Matplotlib and one of PyQt5, PySide2, PyQt4 or PySide to use the graphical interfaces.
 
 
 License
