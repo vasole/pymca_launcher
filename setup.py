@@ -27,7 +27,7 @@ import os
 from setuptools import setup
 
 
-version = "5.5.4"
+version = "5.5.5"
 name = "pymca"
 author = "ESRF - Data Analysis Unit"
 description = "pymca"
@@ -57,7 +57,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
                ]
-install_requires = ["PyMca5>=5.5.4",
+install_requires = ["PyMca5>=5.5.5",
                     "h5py",
                     "numpy",
                     "PyOpenGL",
