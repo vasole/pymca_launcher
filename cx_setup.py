@@ -1,6 +1,6 @@
 # coding: utf-8
 # /*#########################################################################
-# Copyright (C) 2019 European Synchrotron Radiation Facility
+# Copyright (C) 2019-2020 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -341,6 +341,22 @@ if REMOVE_DUPLICATED_MODULES:
             print("Not existing %s" % destination)
             time.sleep(0.1)
 
+    COPY_QT_DLL = False
+    if COPY_QT_DLL:
+        # copy all the dlls in PyQt5/Qt/bin to the PyQt5 directory
+        source = os.path.join(destinationDir, "PyQt5", "Qt", "bin")
+        destination = os.path.join(destinationDir, "PyQt5")
+        if sys.platform.startswith("win"):
+            copy_command = "copy"
+        else:
+            copy_command = "cp"
+
+        for item in glob.glob(os.path.join(source, "*")):
+            target = os.path.join(destination, os.path.basename(item))
+            if os.path.exists(target):
+                continue
+            print("%s %s %s" % (copy_command, item, target))
+            os.system("%s %s %s" % (copy_command, item, target))
     # remove Qt binary files (qml and translation might be needed)
     for item in ["bin", "qml", "translations"]:
         destination = os.path.join(destinationDir,
