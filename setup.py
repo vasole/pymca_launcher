@@ -20,7 +20,7 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "10/01/2020"
+__date__ = "13/04/2020"
 
 import glob
 import os
