@@ -341,7 +341,7 @@ if REMOVE_DUPLICATED_MODULES:
             print("Not existing %s" % destination)
             time.sleep(0.1)
 
-    COPY_QT_DLL = False
+    COPY_QT_DLL = True
     if COPY_QT_DLL:
         # copy all the dlls in PyQt5/Qt/bin to the PyQt5 directory
         source = os.path.join(destinationDir, "PyQt5", "Qt", "bin")
@@ -433,7 +433,7 @@ if RENAME_EXECUTABLES:
                                            os.path.join(exe_win_dir,
                                            'rgbcorrelator')))
 if QTDIR:
-    # copy the Qt library directory and creat the qt.conf file
+    # copy the Qt library directory and create the qt.conf file
     destinationDir = exe_win_dir
     if not os.path.exists(os.path.join(QTDIR, "lib")):
         print("Cannot find lib folder. Invalid QTDIR <%s>" % QTDIR)
