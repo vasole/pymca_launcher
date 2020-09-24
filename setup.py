@@ -20,14 +20,14 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "13/04/2020"
+__date__ = "24/09/2020"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.5.5"
+version = "5.6.0"
 name = "pymca"
 author = "ESRF - Data Analysis Unit"
 description = "pymca"
@@ -49,7 +49,6 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Operating System :: MacOS",
                "Operating System :: Microsoft :: Windows",
                "Operating System :: POSIX",
-               "Programming Language :: Python :: 2.7",
                "Programming Language :: Python :: 3.6",
                "Programming Language :: Python :: 3.7",
                "Programming Language :: Python :: 3.8",
@@ -57,7 +56,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
                ]
-install_requires = ["PyMca5>=5.5.5",
+install_requires = ["PyMca5>=5.6.0",
                     "h5py",
                     "numpy",
                     "PyOpenGL",
