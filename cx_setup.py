@@ -341,7 +341,7 @@ if REMOVE_DUPLICATED_MODULES:
             print("Not existing %s" % destination)
             time.sleep(0.1)
 
-    COPY_QT_DLL = True
+    COPY_QT_DLL = False
     if COPY_QT_DLL:
         # copy all the dlls in PyQt5/Qt/bin to the PyQt5 directory
         source = os.path.join(destinationDir, "PyQt5", "Qt", "bin")
