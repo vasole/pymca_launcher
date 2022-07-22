@@ -20,16 +20,16 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "09/04/2021"
+__date__ = "22/07/2022"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.6.5"
+version = "5.7.3"
 name = "pymca"
-author = "ESRF - Data Analysis Unit"
+author = "V.A. Sole - ESRF"
 description = "pymca"
 f = open("README.rst")
 long_description = f.read()
@@ -53,6 +53,8 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Programming Language :: Python :: 3.7",
                "Programming Language :: Python :: 3.8",
                "Programming Language :: Python :: 3.9",
+               "Programming Language :: Python :: 3.10",
+               "Programming Language :: Python :: 3.11",
                "Topic :: Scientific/Engineering :: Chemistry",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
