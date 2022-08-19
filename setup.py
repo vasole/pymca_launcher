@@ -20,14 +20,14 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "22/07/2022"
+__date__ = "19/08/2022"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.7.3"
+version = "5.7.5"
 name = "pymca"
 author = "V.A. Sole - ESRF"
 description = "pymca"
