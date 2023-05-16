@@ -20,14 +20,14 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "25/01/2023"
+__date__ = "16/05/2023"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.8.1"
+version = "5.8.2"
 name = "pymca"
 author = "V.A. Sole - ESRF"
 description = "pymca"
@@ -61,7 +61,6 @@ classifiers = ["Development Status :: 5 - Production/Stable",
 install_requires = ["PyMca5>=%s" % version,
                     "h5py",
                     "numpy",
-                    "PyOpenGL",
                     "matplotlib"]
                     # PyQt5 is not available everywhere
                     #"qtconsole Not sure about its availability
