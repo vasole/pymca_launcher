@@ -20,14 +20,14 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "27/09/2023"
+__date__ = "30/11/2023"
 
 import glob
 import os
 from setuptools import setup
 
 
-version = "5.9.1"
+version = "5.9.2"
 name = "pymca"
 author = "V.A. Sole - ESRF"
 description = "pymca"
@@ -49,11 +49,11 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Operating System :: MacOS",
                "Operating System :: Microsoft :: Windows",
                "Operating System :: POSIX",
-               "Programming Language :: Python :: 3.7",
                "Programming Language :: Python :: 3.8",
                "Programming Language :: Python :: 3.9",
                "Programming Language :: Python :: 3.10",
                "Programming Language :: Python :: 3.11",
+               "Programming Language :: Python :: 3.12",
                "Topic :: Scientific/Engineering :: Chemistry",
                "Topic :: Scientific/Engineering :: Physics",
                "Topic :: Software Development :: Libraries :: Python Modules",
